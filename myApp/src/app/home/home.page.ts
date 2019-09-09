@@ -34,4 +34,8 @@ export class HomePage {
     ]
   }
 
+  onSlideWillChange() {
+    console.log('onSlideWillChange');
+  }
+
 }

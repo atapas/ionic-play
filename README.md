@@ -18,10 +18,10 @@ Here is how the app looks at a glance:
 ![app look](./screen-shots/app-look.png)
 
 # Contact
-- [tapas.adhikary@gmail.com](tapas.adhikary@gmail.com)
+- [tapas.adhikary@gmail.com](mailto:tapas.adhikary@gmail.com?subject=[GitHub]Query%20on%20ionic-play)
 
   | |
 
-- [greenroots2019@gmail.com](mailto:greenroots2019@gmail.com)
+- [greenroots2019@gmail.com](mailto:greenroots2019@gmail.com?subject=[GitHub]Query%20on%20ionic-play)
 
 © [Greenroots Info](mailto:https://blog.greenroots.info)

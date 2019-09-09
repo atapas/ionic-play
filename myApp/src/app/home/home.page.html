@@ -12,23 +12,22 @@
       pager="true" 
       [options]="slideOpts" 
       class="cardBox scrollModalBox"
-      
     zoom>
-      <ion-slide>
-          <div class="swiper-zoom-container">
-              <h1>Slide 1</h1>
+      <ion-slide *ngFor="let data of slideData">
+          <div class="swiper-zoom-container" style="top:0%;left:0%;width:80%;height:100%">
+            <div>
+                <img src="../../assets/images/{{data.image}}">
+            </div>
+            <div>
+              <span><b>{{data.name}}</b></span>
+              <p class="joke">
+                  {{data.joke}}
+              </p>
+            </div>
           </div>
       </ion-slide>
-      <ion-slide>
-          <div class="swiper-zoom-container">
-              <h1>Slide 2</h1>
-          </div>
-      </ion-slide>
-      <ion-slide>
-          <div class="swiper-zoom-container">
-              <h1>Slide 3</h1>
-          </div>
-      </ion-slide>
+      
+      
     </ion-slides>
   </div>
 </ion-content>

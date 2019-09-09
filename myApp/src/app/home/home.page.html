@@ -1,0 +1,34 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      Ionic Slide Play
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="ion-padding">
+    <ion-slides 
+      pager="true" 
+      [options]="slideOpts" 
+      class="cardBox scrollModalBox"
+      
+    zoom>
+      <ion-slide>
+          <div class="swiper-zoom-container">
+              <h1>Slide 1</h1>
+          </div>
+      </ion-slide>
+      <ion-slide>
+          <div class="swiper-zoom-container">
+              <h1>Slide 2</h1>
+          </div>
+      </ion-slide>
+      <ion-slide>
+          <div class="swiper-zoom-container">
+              <h1>Slide 3</h1>
+          </div>
+      </ion-slide>
+    </ion-slides>
+  </div>
+</ion-content>

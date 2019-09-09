@@ -1,0 +1,22 @@
+{
+  "name": "ionic-play",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/atapas/ionic-play.git"
+  },
+  "author": "Tapas Adhikary",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/atapas/ionic-play/issues"
+  },
+  "homepage": "https://github.com/atapas/ionic-play#readme",
+  "dependencies": {
+    "ionic": "^5.2.7"
+  }
+}

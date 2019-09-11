@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/atapas/ionic-play#readme",
   "dependencies": {
+    "hammerjs": "^2.0.8",
     "ionic": "^5.2.7"
   }
 }

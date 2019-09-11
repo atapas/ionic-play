@@ -15,10 +15,11 @@
       id="jokeSlider"
       #slider
       (ionSlideWillChange)="onSlideWillChange()"
+      (ionSlideDidChange) = "onSlideDidChange()"
       zoom>
       <ion-slide *ngFor="let data of slideData; let counter=index">
-          <div #zoomDiv
-            id="zoomDiv" 
+          <div 
+            id={{counter}} 
             class="swiper-zoom-container" 
             style="top:0%;left:0%;width:80%;height:100%">
             <div>

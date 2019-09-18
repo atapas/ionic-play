@@ -132,16 +132,18 @@ export class HomePage implements AfterViewInit  {
       });
   }
   onSlideDidChange() {
-    //let elem =  this.imgElement.nativeElement;
-    //let elem = document.getElementById('2');
-    //this.panZoomPinch(elem);
+    console.log('onSlideDidChange');
   }
 
   onSlideWillChange() {
     console.log('onSlideWillChange');
-    // this.panZoomPinch();
   }
 
-  
+  loadNext() {
+    console.log('loadNext');
+  }
 
+  loadPrev() {
+    console.log('loadPrev');
+  }
 }

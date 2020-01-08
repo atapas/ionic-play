@@ -1,149 +1,352 @@
-import { Component, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MenuController } from '@ionic/angular';
+import { IOSFilePicker } from '@ionic-native/file-picker/ngx';
+import { File } from '@ionic-native/file/ngx';
+import { FileTransfer } from '@ionic-native/file-transfer/ngx';
+declare var CKEDITOR:any;
+//import { CKEDITOR } from 'ckeditor4';
+declare var require:any;
+//import {PdfHandlingService} from "../services/pdf-handling.service";
+import {LineSeparatorService} from "../services/line-separator.service";
+import {Validators, FormBuilder, FormGroup,FormControl } from '@angular/forms';
+import 'hammerjs/hammer';
+import PendingActions from '@ckeditor/ckeditor5-core/src/pendingactions';
+import PinchZoom from 'pinch-zoom-js'
 
-import * as Hammer from 'hammerjs';
-
+import * as Editor from 'ckeditor';
+import { Platform } from '@ionic/angular';
+import { Directive, Inject, ViewContainerRef,ComponentFactoryResolver }
+ from '@angular/core';
+//import { PinchZoomComponent } from 'ngx-pinch-zoom';
+//import Autosave from '@ckeditor/ckeditor5-autosave/src/autosave'
+import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 
 @Component({
-  selector: 'app-home',
-  templateUrl: 'home.page.html',
-  styleUrls: ['home.page.scss'],
+  selector: 'home',
+  templateUrl: './home.component.html'
 })
-export class HomePage implements AfterViewInit  {
-  
-  @ViewChild('zoomDiv', {static: false}) imgElement: ElementRef;
-  // Optional parameters to pass to the swiper instance. See http://idangero.us/swiper/api/ for valid options.
-  slideOpts = {
-    initialSlide: 1,
-    speed: 400
-  };
+export class HomeComponent implements OnInit {
+  name = 'ng2-ckeditor';
+  ckeConfig: any;
+  numberOfLinesPerPage=15;
+  log: string = '';
+  @ViewChild("editor1",null) myckeditor: any;
+  command: string;
+  maxTextWidth=0;
+  myGroup:any;
+  public Editor = Editor;
+  ckEditorInstance:any;
+  bodyZoom:any; 
+  pageHeight=0;
+  screenSize=null;
+  textForCurrentPage='';
+  mycontent: string='';
 
-  slideData: any = [];
-
-  constructor() {
-    this.slideData = [
-      {
-      'image': 'rajni_image.png',
-      'name': 'Rajni Sir',
-      'joke': "Once spiderman,superman and batman visited rajnikant's house together..it was teachers day!"
-      },
-      {
-        'image': 'chuckn_image.png',
-        'name': 'Chuck Norris',
-        'joke': "Chuck Norris will never have a heart attack. His heart isn't nearly foolish enough to attack him."
-      },
-      {
-        'image': 'jackiechan.png',
-        'name': 'Jackie Chan',
-        'joke': "If you watch a movie with Jackie Chan backwards...You will get a documentary about a Chinese guy who assembles furniture with his feet."
-      }
-    ]
-  }
-
-  ngAfterViewInit(): void {
-    // let elem =  this.imgElement.nativeElement;
-    let elem0 = document.getElementById('0');
-    this.panZoomPinch(elem0);
-
-    let elem1 = document.getElementById('1');
-    this.panZoomPinch(elem1);
-
-    let elem2 = document.getElementById('2');
-    this.panZoomPinch(elem2);
-  }
-
-  panZoomPinch(elem) {
-    const hammer = new Hammer(elem, {});
+  constructor(
+        public menuCtrl: MenuController,
+        private filePicker: IOSFilePicker,
+        private lineSeparatorService: LineSeparatorService,
+        //private pdfHandlingService:PdfHandlingService,
+        private fileTransfer: FileTransfer,
+        private file:File,
+        public platform:Platform,
+        private screenOrientation: ScreenOrientation,
+        private viewContainerRef: ViewContainerRef,
+        private componentFactoryResolver: ComponentFactoryResolver
+  ) {
+    this.myGroup = new FormGroup({
+      myckeditor: new FormControl()
+   });
+   this.screenSize=platform;//.width();
+   //this.screenHeight=platform.height();
    
-    hammer.get('pinch').set({ enable: true });
+   this.maxTextWidth=this.platform.width()/2;
 
-    var posX = 0,
-        posY = 0,
-        scale = 1,
-        last_scale = 1,
-        last_posX = 0,
-        last_posY = 0,
-        max_pos_x = 0,
-        max_pos_y = 0,
-        transform = "",
-        el = elem;
+   this.lineSeparatorService.pageHeight=this.platform.width()*1.1;
+   this.screenOrientation.onChange().subscribe(
+    () => {
+        this.onOrientationChanged();
+    }
+ );
+  }
+  onOrientationChanged(){
+    if(this.screenOrientation.type=='landscape-primary'){
+      this.ckEditorInstance.resize( '100%',''+this.screenSize.height() );
+    }else{
+      this.ckEditorInstance.resize( '100%', ''+this.screenSize.width() );
+    }
+  }  
+  ngOnInit() {
+    //var newText=this.openLocalPdf();//'assets/TestPdf1.pdf'
+    var newText='2 Aaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa\\\nBbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb\\\nCcccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc';
+    //'2 Aaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa\\\nBbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb\\\nCcccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc';
+    this.mycontent=this.lineSeparatorService.displayTextContent(newText,this.maxTextWidth);
+    //this.mycontent=this.pdfHandlingService.finalString;
+    this.setupCKEditor(); 
+  }
+  openLocalPdf() {
+    let filePath = //this.file.applicationDirectory + 
+    'assets';
+    this.pdfHandlingService.loadPdf(`${filePath}/TestPdf1.pdf`);
+    setTimeout(() => {
+      //console.log('this.pdfHandlingService.finalString= '+
+      //return
+      var newText=this.pdfHandlingService.finalString;
+      //this.lineSeparatorService.loadTextContent(newText,0,this.maxTextWidth);
+      this.lineSeparatorService.loadTextContent(newText,0,this.maxTextWidth);
+      //this.mycontent=this.lineSeparatorService.displayTextContent(newText,this.maxTextWidth);
+    }, 1500);
+    
+      /*.then(finalString => {
+        console.log('finalString= '+finalString);
+        
+      });*/
+      
+      //'assets/testPdf.pdf');//url
+      //this.documentViewer.viewDocument(`${filePath}/TestPdf1.pdf`, 'application/pdf', options);    
+  }
+  setupCKEditor(){
+    var myckeditor=document.getElementById("editor1");
+    myckeditor.style.backgroundColor='yellow';//'rgb(134, 170, 234)';
+    myckeditor.style.margin='0px';
+    
+    CKEDITOR.plugins.
+    addExternal( 'autosave', '/assets/autosave/autosave/', 'plugin.js' );
+    CKEDITOR.plugins.
+    addExternal( 'zoom', '/assets/zoom/', 'plugin.js' );
+    //myckeditor.style.left='0%';
+    this.ckeConfig = { 
+      //width:this.platform.width(),
+      margin:0,
+      //skin:'moono-dark',
+      height: this.screenSize.height(),//this.getCurrentHeight(),//
+      resize_enabled :true,
+      autosave: {
+        //messageType: "none"
+        autoLoad: true
+      },
+      allowedContent : true,
+      removePlugins:'elementspath,resize',
+      extraPlugins: 'divarea,zoom,pagebreak,autosave',// horizontalrule,
+      uiColor: '#696969',//kalo'#808080',
+      toolbarGroups: [{
+                "name": "basicstyles",
+                "items":"changeColorButton",
+                "groups": ['openMenuButton',"basicstyles",
+                "changeColorButton",'cke_18'],
+              }],
+      toolbar: [
+                //Scayt, 'Find', 'Replace', 'SelectAll'] },
+                {name: 'basicstyles', 
+                items: ['openMenu','Bold', 'Italic',
+                'changeColorButton','saveToFileButton','cke_18',
+                'zoomEditor']
+               },'/',
+      ]        
+    };
+    //var globalChatEditor = CKEDITOR.instances.chatContent;
 
-        hammer.on('doubletap pan pinch panend pinchend', function(ev) {
-          if (ev.type == "doubletap") {
-              transform =
-                  "translate3d(0, 0, 0) " +
-                  "scale3d(2, 2, 1) ";
-              scale = 2;
-              last_scale = 2;
-              try {
-                  if (window.getComputedStyle(el, null).getPropertyValue('-webkit-transform').toString() != "matrix(1, 0, 0, 1, 0, 0)") {
-                      transform =
-                          "translate3d(0, 0, 0) " +
-                          "scale3d(1, 1, 1) ";
-                      scale = 1;
-                      last_scale = 1;
-                  }
-              } catch (err) {}
-              el.style.webkitTransform = transform;
-              transform = "";
-          }
+      //if( event.data.getKeystroke() == 13 ) {
+         //globalChatEditor.setData("");
+         //globalChatEditor.focus();
+         console.log('onenter');
+         //ajaxUpdates();
+        // event.data.preventDefault();
+        
+
+      
+    //CKEDITOR.timestamp='50';
+    //this.ckeConfig.timestamp='ABCD';
+  }
+  getCurrentHeight(){
+    if(this.screenOrientation.type=='landscape-primary'){
+      return 768;
+    }
+    return 1024;
+    /*var screenSize=this.screenSize;
+    var maxHeight=screenSize.height();
+    var isLandscape=(screenSize.width()>screenSize.height());
+    if(isLandscape){
+      maxHeight=screenSize.width();
+    }
+    return maxHeight;*/
+  }
+  onReady(event) {
+    let ckeditor = event.editor;
+    this.ckEditorInstance=ckeditor;
+    ckeditor.focus();
+    this.addZoomPossibility();    
+    var textArea=document.getElementById("textArea");  
+    var newText=textArea.textContent;
+    //var newText=' ';
+    //'3 Aaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa\\\nBbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb\\\nCcccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc';
+    this.lineSeparatorService.loadTextContent(newText,0,this.maxTextWidth);
+    
+    
+    //this.openLocalPdf();
+
+    //newText='1a Aaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa';
+    //this.loadTextContent(newText,0);
+    
+    //this.displayTextContent('');
+    //this.setupCKEditor();
+    //this.addZoomPossibility();
+  }
+  addZoomPossibility(){
+    var body = this.ckEditorInstance.editable().$;    
+    body.firstElementChild.style.margin='10%';
+    body.style.backgroundColor='red';//'#C0C0C0';//'rgb(134, 170, 234)';
+    body.style.margin='0%';
+    const componentFactory = this.componentFactoryResolver.
+    resolveComponentFactory( PinchZoomComponent);
+    var component = componentFactory.create(
+    this.viewContainerRef.injector,[[body.firstElementChild]], body);
+
+    component.instance.containerHeight = "100%";
+    component.instance.hostOverflow = "visible"; // Overflow must be visible to show the scrolled contents
+
+    component.instance.getImageHeight = function() { 
+      var element=
+      this.element.getElementsByTagName(this.elementTarget)[0];
+      var imageHeight=this.element.getElementsByTagName(this.elementTarget)[0].
+      scrollHeight;//0.85*
+      return imageHeight;
+    }
+    component.instance.getImageWidth = function() { 
+        // override the component's getImageHeight() to take scroll height into account
+        this.element.getElementsByTagName(this.elementTarget)[0].
+        style.width="100%";
+        return this.element.getElementsByTagName(this.elementTarget)[0].
+        scrollWidth;
+    }
+    component.instance.doubleTap=false;
+    //component.instance.events.subscribe((event) => {
+    //    console.log(event, component.instance.scale);
+    //});
+    this.blockHorizontalMoving();
+    component.changeDetectorRef.detectChanges();
+    //this.updateTextContent('2 Aaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa');
+
+  }
+  blockHorizontalMoving(){
+    var divToZoom=document.getElementById("divToZoom");
+    divToZoom.style.position='relative';
+    divToZoom.style.overflowX='hidden';
+  }
+  saveToFile(event){
+    this.ckEditorInstance.execCommand("autosave");
+  }
+  changeColor(event){
+    //var myckeditor=document.getElementById("editor1");
+    //myckeditor.style.color='blue';    
+
+    //var divEle=document.createElement("DIV");
+    //divEle.innerHTML=html;
+    //var plainText=(divEle.textContent || divEle.innerText);
+    
+    //var hr = this.myckeditor.document.createElement( 'hr' );
+    //this.myckeditor.insertElement( hr );
+    //var element = new CKEDITOR.dom.element( 'hr' );
+    //var element = new CKEDITOR.dom.element( 
+    //document.getElementById( 'testHr' ) );
+    //event.insertText("Go now!");
+  }
+  onChange($event: any): void {
+    console.log('onChange');
+      // keyup event in ckeditor
+  }
+    //if( event.getKeystroke() == 13 ) {
+      //console.log('enter');
+      //globalChatEditor.setData("");
+      //globalChatEditor.focus();
+      //event.data.preventDefault();
+   //}
+
+    //this.log += new Date() + "<br />";
+    //this.ckEditorInstance.execCommand("autosave");
   
-          //pan    
-          if (scale != 1) {
-              posX = last_posX + ev.deltaX;
-              posY = last_posY + ev.deltaY;
-              max_pos_x = Math.ceil((scale - 1) * el.clientWidth / 2);
-              max_pos_y = Math.ceil((scale - 1) * el.clientHeight / 2);
-              if (posX > max_pos_x) {
-                  posX = max_pos_x;
+  onEnter($event:any):void{
+    console.log('onEnter');
+  }
+  ionViewWillLeave(){
+      this.ckEditorInstance.execCommand("autosave");
+  }
+  onPaste($event: any): void {
+    //this.log += new Date() + "<br />";
+  }
+  //menu methods
+  openMenu(event) {
+          this.menuCtrl.enable(true, 'first');
+          this.menuCtrl.open('first');
+  }
+  closeMenu() {
+        this.menuCtrl.close();
+  }
+  toggleMenu() {
+        this.menuCtrl.toggle();
+  }
+  downloadAndOpenPdf(currentUrl) {
+            let downloadUrl =currentUrl;//'https://devdactic.com/html/5-simple-hacks-LBT.pdf';
+            let path = this.file.dataDirectory;
+            const transfer = this.fileTransfer.create();
+
+            transfer.download(downloadUrl, path + 'myfile.pdf')
+            .then(entry => {
+              let url = entry.toURL();
+              console.log("url: "+url);
+
+              this.pdfHandlingService.loadPdf(url);//'assets/testPdf.pdf');//url
+      
+              //this.documentViewer.viewDocument(urlPath, 'application/pdf', {});
+              
+            });
+  }
+  //from dropbox
+  getTextOfFile(currentUrl:any){
+            currentUrl=currentUrl.replace("/private","file://");
+            let path = currentUrl.substring(0, currentUrl.lastIndexOf('/'));
+            let file = currentUrl.substring(currentUrl.lastIndexOf('/')+1, currentUrl.length);
+
+           //this.downloadAndOpenPdf(currentUrl);
+      
+            this.file.readAsBinaryString(path, file)//currentUrl,"UTF-8" 'assets/TestPdf1.pdf','utf-8'
+            .then(content=>{
+              var textContent=content+'';//JSON.stringify();
+              console.log("File-Content1: "+ JSON.stringify(textContent));//JSON.stringify(content));
+          
+
+              //this.pdfHandlingService.loadPdf(JSON.stringify(content));
+              //this.file.writeFile(this.file.dataDirectory, 'test.csv', 'hello,world,', {replace: true})
+              //.then(() => {      
+                
+              //})
+              //.catch((err) => {
+              //  console.error("Write error= "+err);
+              //});
+              //this.lineSeparatorService.splitLines(textContent,
+              //  this.maxTextWidth);
+      
+            })
+            .catch(err=>{
+              console.log('err2= '+JSON.stringify(err));
+            });  
+  }      
+  chooseFile(){
+            this.filePicker.pickFile()
+            .then(uri =>{
+              console.log("uri= "+uri);
+              var ending=uri.substring(
+                uri.length-3,3);
+              console.log("ending= "+ending);
+              if(ending =='pdf'){
+                //this.downloadAndOpenPdf();
+                console.log("ending2= ");
+
+              }else{
+                this.getTextOfFile(uri);
               }
-              if (posX < -max_pos_x) {
-                  posX = -max_pos_x;
-              }
-              if (posY > max_pos_y) {
-                  posY = max_pos_y;
-              }
-              if (posY < -max_pos_y) {
-                  posY = -max_pos_y;
-              }
-          }
-  
-  
-          //pinch
-          if (ev.type == "pinch") {
-              scale = Math.max(.999, Math.min(last_scale * (ev.scale), 4));
-          }
-          if(ev.type == "pinchend"){last_scale = scale;}
-  
-          //panend
-          if(ev.type == "panend"){
-              last_posX = posX < max_pos_x ? posX : max_pos_x;
-              last_posY = posY < max_pos_y ? posY : max_pos_y;
-          }
-  
-          if (scale != 1) {
-              transform =
-                  "translate3d(" + posX + "px," + posY + "px, 0) " +
-                  "scale3d(" + scale + ", " + scale + ", 1)";
-          }
-  
-          if (transform) {
-              el.style.webkitTransform = transform;
-          }
-      });
+            })
+            .catch(err => console.log('Error', err));
   }
-  onSlideDidChange() {
-    console.log('onSlideDidChange');
-  }
-
-  onSlideWillChange() {
-    console.log('onSlideWillChange');
-  }
-
-  loadNext() {
-    console.log('loadNext');
-  }
-
-  loadPrev() {
-    console.log('loadPrev');
-  }
+  
 }

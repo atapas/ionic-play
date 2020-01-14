@@ -1,14 +1,14 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MenuController } from '@ionic/angular';
 import { IOSFilePicker } from '@ionic-native/file-picker/ngx';
-import ToolbarView from '@ckeditor/ckeditor5-ui/src/toolbar/toolbarview';
+//import ToolbarView from '@ckeditor/ckeditor5-ui/src/toolbar/toolbarview';
 import { File } from '@ionic-native/file/ngx';
-import ButtonView from '@ckeditor/ckeditor5-ui/src/button/buttonview';
+//import ButtonView from '@ckeditor/ckeditor5-ui/src/button/buttonview';
 import { FileTransfer } from '@ionic-native/file-transfer/ngx';
 declare var CKEDITOR:any;
 //import { CKEDITOR } from 'ckeditor4';
 declare var require:any;
-import {PdfHandlingService} from "../services/pdf-handling.service";
+//import {PdfHandlingService} from "../services/pdf-handling.service";
 import {LineSeparatorService} from "../services/line-separator.service";
 import {Validators, FormBuilder, FormGroup,FormControl } from '@angular/forms';
 import 'hammerjs/hammer';
@@ -27,12 +27,12 @@ import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
   selector: 'home',
   templateUrl: './home.component.html'
 })
-export class HomeComponent implements OnInit {
+export class HomePage implements OnInit {
   name = 'ng2-ckeditor';
   ckeConfig: any;
   numberOfLinesPerPage=15;
   log: string = '';
-  @ViewChild("editor1") myckeditor: any;
+  @ViewChild("editor1",null) myckeditor: any;
   command: string;
   maxTextWidth=0;
   myGroup:any;
@@ -49,7 +49,7 @@ export class HomeComponent implements OnInit {
         public menuCtrl: MenuController,
         private filePicker: IOSFilePicker,
         private lineSeparatorService: LineSeparatorService,
-        private pdfHandlingService:PdfHandlingService,
+        //private pdfHandlingService:PdfHandlingService,
         private fileTransfer: FileTransfer,
         private file:File,
         public platform:Platform,
@@ -90,7 +90,7 @@ export class HomeComponent implements OnInit {
   openLocalPdf() {
     let filePath = //this.file.applicationDirectory + 
     'assets';
-    this.pdfHandlingService.loadPdf(`${filePath}/TestPdf1.pdf`);
+    //this.pdfHandlingService.loadPdf(`${filePath}/TestPdf1.pdf`);
     setTimeout(() => {
       //console.log('this.pdfHandlingService.finalString= '+
       //return
@@ -346,7 +346,7 @@ export class HomeComponent implements OnInit {
               let url = entry.toURL();
               console.log("url: "+url);
 
-              this.pdfHandlingService.loadPdf(url);//'assets/testPdf.pdf');//url
+              //this.pdfHandlingService.loadPdf(url);//'assets/testPdf.pdf');//url
       
               //this.documentViewer.viewDocument(urlPath, 'application/pdf', {});
               

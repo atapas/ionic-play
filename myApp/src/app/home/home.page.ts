@@ -1,12 +1,14 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MenuController } from '@ionic/angular';
 import { IOSFilePicker } from '@ionic-native/file-picker/ngx';
+import ToolbarView from '@ckeditor/ckeditor5-ui/src/toolbar/toolbarview';
 import { File } from '@ionic-native/file/ngx';
+import ButtonView from '@ckeditor/ckeditor5-ui/src/button/buttonview';
 import { FileTransfer } from '@ionic-native/file-transfer/ngx';
 declare var CKEDITOR:any;
 //import { CKEDITOR } from 'ckeditor4';
 declare var require:any;
-//import {PdfHandlingService} from "../services/pdf-handling.service";
+import {PdfHandlingService} from "../services/pdf-handling.service";
 import {LineSeparatorService} from "../services/line-separator.service";
 import {Validators, FormBuilder, FormGroup,FormControl } from '@angular/forms';
 import 'hammerjs/hammer';
@@ -17,7 +19,7 @@ import * as Editor from 'ckeditor';
 import { Platform } from '@ionic/angular';
 import { Directive, Inject, ViewContainerRef,ComponentFactoryResolver }
  from '@angular/core';
-//import { PinchZoomComponent } from 'ngx-pinch-zoom';
+import { PinchZoomComponent } from 'ngx-pinch-zoom';
 //import Autosave from '@ckeditor/ckeditor5-autosave/src/autosave'
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 
@@ -30,7 +32,7 @@ export class HomeComponent implements OnInit {
   ckeConfig: any;
   numberOfLinesPerPage=15;
   log: string = '';
-  @ViewChild("editor1",null) myckeditor: any;
+  @ViewChild("editor1") myckeditor: any;
   command: string;
   maxTextWidth=0;
   myGroup:any;
@@ -41,12 +43,13 @@ export class HomeComponent implements OnInit {
   screenSize=null;
   textForCurrentPage='';
   mycontent: string='';
+  numberOfTimes=0;
 
   constructor(
         public menuCtrl: MenuController,
         private filePicker: IOSFilePicker,
         private lineSeparatorService: LineSeparatorService,
-        //private pdfHandlingService:PdfHandlingService,
+        private pdfHandlingService:PdfHandlingService,
         private fileTransfer: FileTransfer,
         private file:File,
         public platform:Platform,
@@ -149,12 +152,11 @@ export class HomeComponent implements OnInit {
       //if( event.data.getKeystroke() == 13 ) {
          //globalChatEditor.setData("");
          //globalChatEditor.focus();
-         console.log('onenter');
+         //console.log('onenter');
          //ajaxUpdates();
         // event.data.preventDefault();
         
-
-      
+        
     //CKEDITOR.timestamp='50';
     //this.ckeConfig.timestamp='ABCD';
   }
@@ -175,15 +177,14 @@ export class HomeComponent implements OnInit {
     let ckeditor = event.editor;
     this.ckEditorInstance=ckeditor;
     ckeditor.focus();
-    this.addZoomPossibility();    
     var textArea=document.getElementById("textArea");  
     var newText=textArea.textContent;
     //var newText=' ';
     //'3 Aaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa\\\nBbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb\\\nCcccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc';
     this.lineSeparatorService.loadTextContent(newText,0,this.maxTextWidth);
-    
-    
-    //this.openLocalPdf();
+    this.addZoomPossibility();    
+ 
+     //this.runsAlways();
 
     //newText='1a Aaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa';
     //this.loadTextContent(newText,0);
@@ -191,12 +192,47 @@ export class HomeComponent implements OnInit {
     //this.displayTextContent('');
     //this.setupCKEditor();
     //this.addZoomPossibility();
+    /*var mutationObserver = new MutationObserver(function(mutations) {
+      mutations.forEach(function(mutation) {
+        console.log('mutation= '+JSON.stringify(mutation));
+      });
+    });
+    // Starts listening for changes in the root HTML element of the page.
+    mutationObserver.observe(document.documentElement, {
+      attributes: true,
+      characterData: true,
+      childList: true,
+      subtree: true,
+      attributeOldValue: true,
+      characterDataOldValue: true
+    });*/
   }
+  runsAlways(){
+    setTimeout(() => {
+      //var firstDiv=document.getElementById('divEditor');
+      //var firstDiv=document.getElementById('page0');
+      //var firstDiv = this.ckEditorInstance.editable().$;    
+      //console.log('div top= '+firstDiv.);
+      if(this.numberOfTimes>5){
+        //console.log('hei1');
+        this.lineSeparatorService.addPageInTheEnd();
+      }else{
+        //console.log('hei0');
+        this.numberOfTimes++;
+        this.runsAlways();
+      }
+    },500);
+  }
+  myFunction() {
+    console.log('working!!!');
+    alert("work");
+ }
   addZoomPossibility(){
     var body = this.ckEditorInstance.editable().$;    
     body.firstElementChild.style.margin='10%';
     body.style.backgroundColor='red';//'#C0C0C0';//'rgb(134, 170, 234)';
     body.style.margin='0%';
+    
     const componentFactory = this.componentFactoryResolver.
     resolveComponentFactory( PinchZoomComponent);
     var component = componentFactory.create(
@@ -210,6 +246,7 @@ export class HomeComponent implements OnInit {
       this.element.getElementsByTagName(this.elementTarget)[0];
       var imageHeight=this.element.getElementsByTagName(this.elementTarget)[0].
       scrollHeight;//0.85*
+      //var editable = element.editable();
       return imageHeight;
     }
     component.instance.getImageWidth = function() { 
@@ -220,14 +257,34 @@ export class HomeComponent implements OnInit {
         scrollWidth;
     }
     component.instance.doubleTap=false;
-    //component.instance.events.subscribe((event) => {
-    //    console.log(event, component.instance.scale);
-    //});
+    component.instance.events.subscribe((event) => {
+      console.log(event);
+      var firstPage1=document.getElementById('page2');
+      
+      //console.log('firstPage1.scrolltop= '+document.scrollingElement.scrollTop);
+      if(event.type=='touchstart'){
+        var firstPage=document.getElementById('page0');
+        var scrolParag = document.getElementById('divEditor');
+        //var touch = event.touches[0] || 
+        //event.changedTouches[0];
+        //firstPage.offsetTop);
+       //console.log('scrolls finally! firstPage= '+body.style.top);
+       //body.style.top='50%'; 
+       
+       //console.log('scrolls finally! firstPage= '+body.firstElementChild.style.top);
+       //body.firstElementChild.style.top='50%'; 
+            
+      }
+      if(event.type=='touchmove'){
+        console.log('moves finally!');      
+      }
+    });
     this.blockHorizontalMoving();
     component.changeDetectorRef.detectChanges();
     //this.updateTextContent('2 Aaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa');
-
+    //body.on('scroll', ()=> {alert('I am scrolling!');});
   }
+  
   blockHorizontalMoving(){
     var divToZoom=document.getElementById("divToZoom");
     divToZoom.style.position='relative';
@@ -251,10 +308,7 @@ export class HomeComponent implements OnInit {
     //document.getElementById( 'testHr' ) );
     //event.insertText("Go now!");
   }
-  onChange($event: any): void {
-    console.log('onChange');
-      // keyup event in ckeditor
-  }
+  
     //if( event.getKeystroke() == 13 ) {
       //console.log('enter');
       //globalChatEditor.setData("");
@@ -265,9 +319,6 @@ export class HomeComponent implements OnInit {
     //this.log += new Date() + "<br />";
     //this.ckEditorInstance.execCommand("autosave");
   
-  onEnter($event:any):void{
-    console.log('onEnter');
-  }
   ionViewWillLeave(){
       this.ckEditorInstance.execCommand("autosave");
   }

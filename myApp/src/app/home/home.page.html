@@ -1,40 +1,112 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>
-      Ionic Slide Play
-    </ion-title>
-  </ion-toolbar>
-</ion-header>
+<meta name="viewport" content="width=768,height=300, initial-scale=1, maximum-scale=4.0, user-scalable=no">
+<ion-menu type="push"
+enable-menu-with-back-views="true"
+class="innerMenuClass"
+contentId="first"
+   menuId="first">
+   <ion-header>
+    <ion-toolbar color="primary">
+      <ion-title>Fonktiounen</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content class="menuContent"
+style="background-color:gray"
+color="gray">
+    <ion-list>
+      <ion-item (click)="chooseFile()">
+        <ion-icon name="open"></ion-icon>
+        <ion-label> Datei opmaachen</ion-label>
+      </ion-item>
+      <ion-item (click)="closeMenu()">
+        <ion-icon name="close"></ion-icon>
+        <ion-label> Zoumaachen</ion-label>
+      </ion-item>
+    </ion-list>
+  </ion-content>
+</ion-menu>
+<ion-split-pane
+    class="menuClass" 
+    contentId="first">
+    <ion-router-outlet id="first"></ion-router-outlet>
+</ion-split-pane>
 
-<ion-content>
-  <div class="ion-padding">
-    <ion-slides 
-      pager="true" 
-      [options]="slideOpts" 
-      class="cardBox scrollModalBox"
-      id="jokeSlider"
-      #slider
-      (ionSlideNextEnd)="loadNext()"
-      (ionSlidePrevEnd)="loadPrev()"
-      (ionSlideWillChange)="onSlideWillChange()"
-      (ionSlideDidChange) = "onSlideDidChange()"
-      zoom>
-      <ion-slide *ngFor="let data of slideData; let counter=index">
-          <div 
-            id={{counter}} 
-            class="swiper-zoom-container" 
-            style="top:0%;left:0%;width:80%;height:100%">
-            <div>
-                <img src="../../assets/images/{{data.image}}">
-            </div>
-            <div>
-              <span><b>{{counter+1}}. {{data.name}}</b></span>
-              <p class="joke">
-                  {{data.joke}}
-              </p>
-            </div>
-          </div>
-      </ion-slide>
-    </ion-slides>
-  </div>
-</ion-content>
+<!--<ion-content #content 
+  id="main"
+  style="background-color:rgb(134, 170, 234)"
+  color="gray"
+  [scrollEvents]="true"
+  (ionScroll)="onScroll($event)">-->
+
+
+  <div no-bounce id="divEditor"
+  class="scrollContent"
+  style="background-color:rgb(165,165,165);
+  top:0%;height:100%;" > 
+<br>
+<form name="ckeditor"
+style="background-color: blue">
+<ckeditor no-bounce 
+id="editor1" 
+class="ck-editor__editable"
+        [(ngModel)]="mycontent" 
+        #myckeditor
+        name="editor1"
+        [readonly]="false"
+        required
+        (ready)="onReady($event)"
+        
+        [config]="ckeConfig" 
+        style="margin:0"  
+        debounce="500" 
+        draggable="true"
+       (paste)="onPaste($event)"
+        >
+
+        <ckbutton
+              [name]="'openMenu'"
+              [command]="'openMenu'"
+              [toolbar]="'styles,1'"
+              (click)="openMenu($event)"
+              menuToggle
+              [label]="'Save Document'"
+              [icon]="'/assets/openMenuIcon.png'"
+              ></ckbutton> 
+
+        <ckbutton 
+        [name]="'changeColorButton'"
+        [command]="'changeColor'"
+        [toolbar]="'styles,1'"
+        (click)="changeColor($event)"
+        [label]="'Save Document'"
+        [icon]="'/assets/logoCDV.png'"
+        ></ckbutton>  
+
+        <ckbutton 
+        [name]="'saveToFileButton'"
+        [command]="'saveToFile'"
+        [toolbar]="'styles,1'"
+        (click)="saveToFile($event)"
+        [label]="'Save Document'"
+        [icon]="'/assets/saveToFile.png'"
+        ></ckbutton> 
+
+        <ckbutton 
+        [name]="'zoomEditor'"
+        [command]="'zoomEditor'"
+        [toolbar]="'styles,1'"
+        (click)="zoomEditor()"
+        [label]="'Save Document'"
+        [icon]="'/assets/saveToFile.png'"
+        ></ckbutton> 
+</ckeditor>
+</form>
+
+</div>
+<div
+  id="spanText" style="left:50%">spanText</div>
+  <span
+  id="spanText2" style="left:50%">spanText</span>
+<textarea style="top:-200px;display:none"
+id="textArea">1a Aaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa \\\nBbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb\\\nCcccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc\\\nDdddddddddd Ddddddddddd Ddddddddddd Ddddddddddd Ddddddddddd Ddddddddddd\\\nEeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee\\\nFffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff\\\nGggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg\\\nAaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa\\\n2 Aaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa\\\nBbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb\\\nCcccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc\\\nDdddddddddd Ddddddddddd Ddddddddddd Ddddddddddd Ddddddddddd Ddddddddddd\\\nEeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee\\\nFffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff\\\nGggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg\\\nAaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa 3Aaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa\\\nBbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb\\\nCcccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc\\\nDdddddddddd Ddddddddddd Ddddddddddd Ddddddddddd Ddddddddddd Ddddddddddd\\\nEeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee\\\nFffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff\\\nGggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg\\\nAaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa 4Aaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa\\\nBbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb\\\nCcccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc\\\nDdddddddddd Ddddddddddd Ddddddddddd Ddddddddddd Ddddddddddd Ddddddddddd\\\nEeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee\\\nFffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff\\\nGggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg\\\nAaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa 5Aaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa\\\nBbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb\\\nCcccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc\\\nDdddddddddd Ddddddddddd Ddddddddddd Ddddddddddd Ddddddddddd Ddddddddddd\\\nEeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee \\\n2 Eeeeeeee\\\nFffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff\\\nGggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg\\\nAaaaaaaaaaaaaaaaaa 6Aaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa\\\nBbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb\\\nCcccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc\\\nDdddddddddd Ddddddddddd Ddddddddddd Ddddddddddd Ddddddddddd Ddddddddddd\\\nEeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee\\\nFffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff\\\nGggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg\\\nAaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa 7Aaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa\\\nBbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb\\\nCcccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc\\\nDdddddddddd Ddddddddddd Ddddddddddd Ddddddddddd Ddddddddddd Ddddddddddd\\\nEeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee\\\nFffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff\\\nGggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg\\\nAaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa 8Aaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa\\\nBbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb\\\nCcccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc\\\nDdddddddddd Ddddddddddd Ddddddddddd Ddddddddddd Ddddddddddd Ddddddddddd\\\nEeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee\\\nFffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff\\\nGggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg\\\nAaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa 9Aaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa\\\nBbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb\\\nCcccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc\\\nDdddddddddd Ddddddddddd Ddddddddddd Ddddddddddd Ddddddddddd Ddddddddddd\\\nEeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee\\\nFffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff\\\nGggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg\\\nAaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa 10Aaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa\\\nBbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb \\\n3 Bbbbbbbbb\\\nCcccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc\\\nDdddddddddd Ddddddddddd Ddddddddddd Ddddddddddd Ddddddddddd Ddddddddddd\\\nEeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee\\\nFffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff\\\nGggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg\\\nAaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa 11Aaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa\\\nBbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb\\\nCcccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc\\\nDdddddddddd Ddddddddddd Ddddddddddd Ddddddddddd Ddddddddddd Ddddddddddd\\\nEeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee\\\nFffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff\\\nGggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg\\\nAaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa 12Aaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa\\\nBbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb\\\nCcccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc\\\nDdddddddddd Ddddddddddd Ddddddddddd Ddddddddddd Ddddddddddd Ddddddddddd\\\nEeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee\\\nFffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff\\\nGggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg\\\nAaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa 13Aaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa\\\nBbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb\\\nCcccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc\\\nDdddddddddd Ddddddddddd Ddddddddddd Ddddddddddd Ddddddddddd Ddddddddddd\\\nEeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee\\\nFffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff\\\nGggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg\\\nAaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa 14Aaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa\\\nBbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb\\\nCcccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc\\\nDdddddddddd Ddddddddddd Ddddddddddd Ddddddddddd Ddddddddddd Ddddddddddd\\\nEeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee\\\nFffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff\\\n4 Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg\\\nAaaaaaaaaaaaaaaaaa 15Aaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa\\\nBbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb\\\nCcccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc\\\nDdddddddddd Ddddddddddd Ddddddddddd Ddddddddddd Ddddddddddd Ddddddddddd\\\nEeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee\\\nFffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff\\\nGggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg\\\nAaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa 16Aaaaaaaaaaaaaaaaaa\\\nBbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb\\\nCcccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc\\\nDdddddddddd Ddddddddddd Ddddddddddd Ddddddddddd Ddddddddddd Ddddddddddd\\\nEeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee\\\nFffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff\\\nGggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg\\\nAaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa 17Aaaaaaaaaaaaaaaaaa\\\nBbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb\\\nCcccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc\\\nDdddddddddd Ddddddddddd Ddddddddddd Ddddddddddd Ddddddddddd Ddddddddddd\\\nEeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee\\\nFffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff\\\nGggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg\\\nAaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa 18Aaaaaaaaaaaaaaaaaa\\\nBbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb\\\nCcccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc\\\nDdddddddddd Ddddddddddd Ddddddddddd Ddddddddddd Ddddddddddd Ddddddddddd\\\nEeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee\\\nFffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff\\\nGggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg\\\nAaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa 19Aaaaaaaaaaaaaaaaaa\\\nBbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb\\\nCcccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc\\\n5 Ddddddddddd Ddddddddddd Ddddddddddd Ddddddddddd Ddddddddddd Ddddddddddd\\\nEeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee\\\nFffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff\\\nGggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg\\\nAaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa 20Aaaaaaaaaaaaaaaaaa\\\nBbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb\\\nCcccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc\\\nDdddddddddd Ddddddddddd Ddddddddddd Ddddddddddd Ddddddddddd Ddddddddddd\\\nEeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee\\\nFffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff\\\nGggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg\\\nAaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa 21Aaaaaaaaaaaaaaaaaa\\\nBbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb\\\nCcccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc\\\nDdddddddddd Ddddddddddd Ddddddddddd Ddddddddddd Ddddddddddd Ddddddddddd\\\nEeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee\\\nFffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff\\\nGggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg\\\nAaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa 22Aaaaaaaaaaaaaaaaaa\\\nBbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb\\\nCcccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc\\\nDdddddddddd Ddddddddddd Ddddddddddd Ddddddddddd Ddddddddddd Ddddddddddd\\\nEeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee\\\nFffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff\\\nGggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg\\\nAaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa Aaaaaaaaaaaaaaaaaa 23Aaaaaaaaaaaaaaaaaa\\\nBbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb Bbbbbbbbb\\\nCcccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc Ccccccccccccc\\\nDdddddddddd Ddddddddddd Ddddddddddd Ddddddddddd Ddddddddddd Ddddddddddd\\\nEeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee Eeeeeeee\\\nFffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff Fffffffffffff\\\nGggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg Gggggggg\\\nGggggggg</textarea>
+
+  
